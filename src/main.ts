@@ -29,6 +29,5 @@ ContextRegistry.addContextCreatedCallback(args =>{
     cube.position.y += .5;
     scene.add(cube);
 
-    //@ts-ignore TODO: fix ts for THREE.Mesh
     GameObject.addComponent(cube, new Rotate());
 })
