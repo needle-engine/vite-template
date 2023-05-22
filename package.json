@@ -1,12 +1,10 @@
 {
-  "name": "my-project",
+  "name": "my-needle-engine-project",
   "version": "1.0.0",
   "scripts": {
     "start": "vite --host",
-    "build:dev": "vite build && npm run copy-files",
+    "build:dev": "vite build",
     "build:production": "npm run build:dev && npm run gltf:transform",
-    "serve": "vite preview",
-    "copy-files": "copy-files-from-to",
     "gltf:transform": "npm run transform --prefix node_modules/@needle-tools/gltf-build-pipeline"
   },
   "dependencies": {
@@ -14,14 +12,11 @@
     "three": "npm:@needle-tools/three@0.146.8"
   },
   "devDependencies": {
-    "@needle-tools/editor-sync": "2.0.0-alpha",
     "@needle-tools/helper": "^0.7.4",
-    "@needle-tools/needle-component-compiler": "^1.9.3",
     "@types/three": "0.146.0",
-    "@vitejs/plugin-basic-ssl": "^0.1.2",
-    "copy-files-from-to": "^3.7.0",
-    "typescript": "^4.5.5",
-    "vite": "^3.1.4",
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.4",
     "vite-plugin-compression": "^0.5.1"
   }
 }
