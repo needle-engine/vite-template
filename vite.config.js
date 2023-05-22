@@ -13,10 +13,10 @@ export default defineConfig(async ({ command }) => {
         server: {
             https: false,
             proxy: { // workaround: specifying a proxy skips HTTP2 which is currently problematic in Vite since it causes session memory timeouts.
-                'https://localhost:3000': 'https://localhost:3000'
+                'https://localhost:1107': 'https://localhost:1107'
             },
             strictPort: true,
-            port: 3000,
+            port: 1107,
         },
         build: {
             outDir: "./dist",
