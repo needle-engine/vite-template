@@ -1,9 +1,8 @@
-import "@needle-tools/engine";
-import { Behaviour, ContextRegistry, GameObject, showBalloonMessage } from "@needle-tools/engine";
+import { Behaviour, ContextRegistry, GameObject, showBalloonMessage, registerType } from "@needle-tools/engine";
 import { AxesHelper, GridHelper } from "three";
 import * as THREE from "three";
 
-class Rotate extends Behaviour {
+export class Rotate extends Behaviour {
     start() {
         console.log(this);
         showBalloonMessage("Hello Cube");
