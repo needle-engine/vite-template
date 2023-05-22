@@ -1,6 +1,6 @@
 # Needle Engine
 
-This is a minimal Vite-based project. You can [fork and edit it on Stackblitz](https://stackblitz.com/fork/github/needle-engine/vite-template) directly to quickly try out Needle Engine.
+This is a minimal Vite-based project. You can [**fork and edit on Stackblitz**](https://stackblitz.com/fork/github/needle-engine/vite-template) directly to try out Needle Engine without any installation.
 
 
 ## Troubleshooting
