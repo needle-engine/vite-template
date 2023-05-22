@@ -1,5 +1,5 @@
 {
-  "name": "my-needle-engine-project",
+  "name": "@needle-tools/vite-template",
   "version": "1.0.0",
   "scripts": {
     "start": "vite --host",
@@ -18,5 +18,14 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.4",
     "vite-plugin-compression": "^0.5.1"
+  },
+  "author": {
+    "name": "Needle Tools",
+    "email": "hi@needle.tools",
+    "url": "https://needle.tools"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/needle-engine"
   }
 }
