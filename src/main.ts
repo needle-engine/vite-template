@@ -2,6 +2,7 @@ import { Behaviour, ContextRegistry, GameObject, showBalloonMessage, registerTyp
 import { AxesHelper, GridHelper } from "three";
 import * as THREE from "three";
 
+@registerType
 export class Rotate extends Behaviour {
     start() {
         console.log(this);
