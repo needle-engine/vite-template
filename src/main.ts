@@ -1,4 +1,4 @@
-import { Behaviour, ContextRegistry, GameObject, showBalloonMessage, registerType } from "@needle-tools/engine";
+import { Behaviour, GameObject, showBalloonMessage, registerType, NeedleEngine } from "@needle-tools/engine";
 import { AxesHelper, GridHelper } from "three";
 import * as THREE from "three";
 
@@ -13,7 +13,7 @@ export class Rotate extends Behaviour {
     }
 }
 
-ContextRegistry.addContextCreatedCallback(args =>{
+NeedleEngine.addContextCreatedCallback(args =>{
     const context = args.context;
     const scene = context.scene;
 
