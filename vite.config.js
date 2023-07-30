@@ -8,7 +8,7 @@ export default defineConfig(async ({ command }) => {
         base: "./",
         plugins: [
             useGzip(needleConfig) ? viteCompression({ deleteOriginFile: true }) : null,
-            needlePlugins(command, needleConfig),
+            needlePlugins(command, needleConfig, { noPoster: true }),
         ],
         server: {
             https: false,
