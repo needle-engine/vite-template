@@ -1,4 +1,4 @@
-import { Behaviour, GameObject, showBalloonMessage, registerType, NeedleEngine } from "@needle-tools/engine";
+import { Behaviour, GameObject, showBalloonMessage, registerType, NeedleEngine, DragControls } from "@needle-tools/engine";
 import { AxesHelper, GridHelper } from "three";
 import * as THREE from "three";
 
@@ -21,6 +21,7 @@ NeedleEngine.addContextCreatedCallback(args =>{
     scene.add(grid);
 
     const axis = new AxesHelper();
+    axis.position.y = 1;
     scene.add(axis);
 
     const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
@@ -28,6 +29,10 @@ NeedleEngine.addContextCreatedCallback(args =>{
     const cube = new THREE.Mesh(geometry, material); 
     cube.position.y += .5;
     scene.add(cube);
+
+    const dragControls = GameObject.addNewComponent(cube, DragControls);
+    dragControls.showGizmo = false;
+    dragControls.useViewAngle = false;
 
     GameObject.addComponent(cube, new Rotate());
 })
