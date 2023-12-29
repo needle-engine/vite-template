@@ -8,8 +8,8 @@
     "gltf:transform": "npm run transform --prefix node_modules/@needle-tools/gltf-build-pipeline"
   },
   "dependencies": {
-    "@needle-tools/engine": "^3.11.0-beta",
-    "three": "npm:@needle-tools/three@0.154.2"
+    "@needle-tools/engine": "^3.28.5-beta",
+    "three": "npm:@needle-tools/three@0.154.3"
   },
   "devDependencies": {
     "@needle-tools/helper": "^0.7.4",

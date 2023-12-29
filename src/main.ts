@@ -1,4 +1,4 @@
-import { Behaviour, GameObject, showBalloonMessage, registerType, NeedleEngine, DragControls } from "@needle-tools/engine";
+import { Behaviour, GameObject, showBalloonMessage, registerType, NeedleEngine, DragControls, onStart, Context } from "@needle-tools/engine";
 import { AxesHelper, GridHelper } from "three";
 import * as THREE from "three";
 
@@ -13,8 +13,10 @@ export class Rotate extends Behaviour {
     }
 }
 
-NeedleEngine.addContextCreatedCallback(args =>{
-    const context = args.context;
+// onStart is one way to hook into the needle engine event loop (this is called once at the beginning of the update loop)
+// you can also directly hook into update events using onUpdate
+// or use NeedleEngine.addContextCreatedCallback
+onStart(context =>{
     const scene = context.scene;
 
     const grid = new GridHelper();
