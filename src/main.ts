@@ -66,6 +66,7 @@ onStart(context =>{
     // Or just assign a skybox-image or environment-image attribute on <needle-engine>
     // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
     addComponent(scene, RemoteSkybox, {
+        // You can assign an URL here or one of the built-in keywords
         url: "quicklook-ar",
         environment: true,
         background: false,
