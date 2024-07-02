@@ -1,4 +1,4 @@
-import { Behaviour, showBalloonMessage, DragControls, onStart, DragMode, PointerEventData, serializable, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls } from "@needle-tools/engine";
+import { Behaviour, showBalloonMessage, DragControls, onStart, DragMode, PointerEventData, serializable, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8 } from "@needle-tools/engine";
 import * as THREE from "three";
 
 // Simple example component that does nothing but rotate an object.
@@ -66,7 +66,9 @@ onStart(context =>{
     // Or just assign a skybox-image or environment-image attribute on <needle-engine>
     // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
     addComponent(scene, RemoteSkybox, {
-        url: "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/1k/studio_small_08_1k.exr"
+        url: "quicklook-ar",
+        environment: true,
+        background: false,
     });
     // Make the background blurry
     if(context.mainCameraComponent)
@@ -92,4 +94,10 @@ onStart(context =>{
         ContactShadows.auto();    
     });
 
+
+    // To add postprocessing simple add a PostProcessingManager component to your scene
+    const post = addComponent(context.scene, PostProcessingManager);
+    const tonemapping = post.addEffect(new ToneMappingEffect())
+    tonemapping.setMode("AgX");
+    post.addEffect(new SharpeningEffect());
 })
