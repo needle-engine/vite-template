@@ -1,4 +1,4 @@
-import { Behaviour, showBalloonMessage, DragControls, onStart, DragMode, PointerEventData, serializable, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8 } from "@needle-tools/engine";
+import { Behaviour, showBalloonMessage, DragControls, onStart, DragMode, PointerEventData, serializable, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils } from "@needle-tools/engine";
 import * as THREE from "three";
 
 // Simple example component that does nothing but rotate an object.
@@ -35,7 +35,7 @@ onStart(context =>{
 
     // you can use regular threejs syntax to create objects
     const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
-    const material = new THREE.MeshStandardMaterial( {color: 0xdddddd} ); 
+    const material = new THREE.MeshStandardMaterial( { color: 0xaaaaaa } ); 
     const cube = new THREE.Mesh(geometry, material); 
     cube.position.x = 1;
     cube.position.y += .5;
@@ -67,7 +67,7 @@ onStart(context =>{
     // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
     addComponent(scene, RemoteSkybox, {
         // You can assign an URL here or one of the built-in keywords
-        url: "quicklook-ar",
+        url: "studio",
         environment: true,
         background: false,
     });
@@ -98,7 +98,14 @@ onStart(context =>{
 
     // To add postprocessing simple add a PostProcessingManager component to your scene
     const post = addComponent(context.scene, PostProcessingManager);
-    const tonemapping = post.addEffect(new ToneMappingEffect())
-    tonemapping.setMode("AgX");
     post.addEffect(new SharpeningEffect());
+    const bloom = post.addEffect(new BloomEffect());
+    bloom.scatter.value = .8;
+
+    const sphere = ObjectUtils.createPrimitive("Sphere", { 
+        material: new THREE.MeshStandardMaterial({emissive: 0xffffff, emissiveIntensity: 5})
+    });
+    sphere.position.y = 2;
+    sphere.scale.multiplyScalar(0.1);
+    scene.add(sphere);
 })
