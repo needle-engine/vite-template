@@ -22,5 +22,5 @@ Please reach out to us in our [forum](https://forum.needle.tools) if you have an
 
 <b>[needle — tools for unity](https://needle.tools)</b> • 
 [@NeedleTools](https://twitter.com/NeedleTools) • 
-[@marcel_wiessler](https://twitter.com/marcel_wiessler) • 
-[@hybridherbst](https://twitter.com/hybridherbst)
+[Forum](https://forum.needle.tools) • 
+[Youtube](https://www.youtube.com/@needle-tools)
