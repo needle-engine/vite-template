@@ -7,12 +7,12 @@
     "build:production": "vite build -- --production"
   },
   "dependencies": {
-    "@needle-tools/engine": "^3.48.1",
-    "three": "npm:@needle-tools/three@^0.162.10"
+    "@needle-tools/engine": "^4.3.2-beta.4",
+    "three": "npm:@needle-tools/three@^0.169.0"
   },
   "devDependencies": {
     "@needle-tools/helper": "^1.9.0",
-    "@types/three": "0.162.0",
+    "@types/three": "0.169.0",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "typescript": "^5.0.4",
     "vite": "<= 4.3.9",
