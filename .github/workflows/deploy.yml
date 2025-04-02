@@ -1,11 +1,8 @@
-name: Build and Deploy Vite App to Needle Cloud
+name: Build and Deploy to Needle Cloud
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build-and-deploy:
