@@ -31,13 +31,18 @@ jobs:
         uses: needle-tools/deploy-to-needle-cloud-action@v1.0.1
         id: deploy
         with:
-            token: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
-            name: vite-template
-            dir: ./dist
+          token: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
+          name: vite-template
+          dir: ./dist
         env:
           NODE_ENV: production
           NEEDLE_CLOUD_TOKEN: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
           
       - name: Display deployment URL
         run: |
-          echo "::notice title=Deployment URL::Deployed to ${{ steps.deploy.outputs.url }}"
+            echo "::notice title=Deployment URL::Deployed to ${{ steps.deploy.outputs.url }}"
+            
+            # Add to GitHub step summary (appears at bottom of workflow run)
+            echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+            echo "Application has been successfully deployed!" >> $GITHUB_STEP_SUMMARY
+            echo "**Deployment URL:** [${{ steps.deploy.outputs.url }}](${{ steps.deploy.outputs.url }})" >> $GITHUB_STEP_SUMMARY
