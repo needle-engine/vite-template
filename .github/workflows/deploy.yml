@@ -31,24 +31,16 @@ jobs:
           NEEDLE_CLOUD_TOKEN: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
 
       - name: Deploy to Needle Cloud
+        uses: needle-tools/deploy-to-needle-cloud-action@v1.0.1
         id: deploy
-        run: |
-          # Run the deployment command and capture output
-          DEPLOY_OUTPUT=$(npx needle-cloud deploy ./dist --name vite-template --token ${{ secrets.NEEDLE_CLOUD_TOKEN }})
-          
-          # Extract the URL from the output (adjust the grep pattern as needed)
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -o 'https://[^ ]*' | head -1)
-          
-          # Set the URL as an output variable
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-          
-          # Add URL to the job summary
-          echo "## 🚀 Deployment Complete!" >> $GITHUB_STEP_SUMMARY
-          echo "Deployed to: [$DEPLOY_URL]($DEPLOY_URL)" >> $GITHUB_STEP_SUMMARY
+        with:
+            token: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
+            name: vite-template
+            dir: ./dist
         env:
           NODE_ENV: production
           NEEDLE_CLOUD_TOKEN: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
           
       - name: Display deployment URL
         run: |
-          echo "::notice title=Deployment URL::Deployed to ${{ steps.deploy.outputs.deploy_url }}"
+          echo "::notice title=Deployment URL::Deployed to ${{ steps.deploy.outputs.url }}"
