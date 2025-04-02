@@ -21,7 +21,6 @@ export default defineConfig(async ({ command }) => {
         build: {
             outDir: "./dist",
             emptyOutDir: true,
-            keepNames: true,
         }
     }
 });
