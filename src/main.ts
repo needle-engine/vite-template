@@ -1,39 +1,16 @@
-import { Behaviour, showBalloonMessage, DragControls, onStart, DragMode, PointerEventData, serializable, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils } from "@needle-tools/engine";
+import { onStart, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils, onUpdate, Gizmos, getTempVector } from "@needle-tools/engine";
 import * as THREE from "three";
+import { Rotate } from "./scripts/Rotate.js";
 
-// Simple example component that does nothing but rotate an object.
-export class Rotate extends Behaviour {
-
-    @serializable()
-    speed: number = .5;
-
-    start() {
-        console.log(this);
-        showBalloonMessage("Hello Cube");
-    }
-    update(): void {
-        this.gameObject.rotateY(this.context.time.deltaTime * this.speed);
-    }
-    onPointerEnter(_args: PointerEventData) {
-        showBalloonMessage("Hovering Cube!");
-        this.speed *= 4;
-    }
-    onPointerExit(_args: PointerEventData) {
-        showBalloonMessage("Bye Cube!");
-        this.speed *= .25;
-    }
-    onPointerClick(_args: PointerEventData) {
-        this.gameObject.scale.multiplyScalar(1.1);
-    }
-}
 
 // onStart is one way to hook into the needle engine event loop (this is called once at the beginning of the update loop)
 // you can also directly hook into update events using onUpdate
 // or use NeedleEngine.addContextCreatedCallback
-onStart(context =>{
+onStart(context => {
     const scene = context.scene;
 
     // you can use regular threejs syntax to create objects
+    /*
     const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
     const material = new THREE.MeshStandardMaterial( { color: 0xaaaaaa } ); 
     const cube = new THREE.Mesh(geometry, material); 
@@ -45,13 +22,13 @@ onStart(context =>{
         // You can initialize component properties inline:
         // speed: 5
     });
-
     // DragControls is a builtin Needle Engine componen to allow users to drag an object.
     // This works on desktop as well as AR or VR
     addComponent(cube, DragControls, {
         showGizmo: false,
         dragMode: DragMode.XZPlane,
     });
+    */
 
     // add WebXR support
     addComponent(scene, WebXR, {
@@ -63,7 +40,7 @@ onStart(context =>{
 
     // We can modify the background or scene lighting easily using a RemoteSkybox
     // We can also set the skybox directly on the scene if we load it manually
-    // Or just assign a skybox-image or environment-image attribute on <needle-engine>
+    // Or just assign a background-image or environment-image attribute on <needle-engine>
     // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
     addComponent(scene, RemoteSkybox, {
         // You can assign an URL here or one of the built-in keywords
@@ -71,11 +48,14 @@ onStart(context =>{
         environment: true,
         background: false,
     });
+
     // Make the background blurry
-    if(context.mainCameraComponent)
-        context.mainCameraComponent.backgroundBlurriness = 1;
-     // Let's also add a Contact Shadow component
-     ContactShadows.auto();
+    if (context.mainCameraComponent) {
+        context.mainCameraComponent.backgroundBlurriness = 1.5;
+    }
+
+    // Let's also add a Contact Shadow component
+    const contactshadows = ContactShadows.auto();
 
     // To load or switch additional content it's easy to use a SceneSwitcher 
     const sceneSwitcher = addComponent(scene, SceneSwitcher, {
@@ -84,15 +64,22 @@ onStart(context =>{
     sceneSwitcher.addScene("https://engine.needle.tools/demos/gltf-progressive/assets/cyberpunk/model.glb")
 
     sceneSwitcher.select(0).then(_success => {
-        console.log("Loaded Scene", sceneSwitcher.currentlyLoadedScene);
-        sceneSwitcher.currentlyLoadedScene?.asset.scale.multiplyScalar(20);
-        sceneSwitcher.currentlyLoadedScene?.asset.rotateY(Math.PI * -.5);
+        const loaded = sceneSwitcher.currentlyLoadedScene?.asset
+        if (loaded) {
+            console.log("Loaded Scene", loaded);
+            loaded?.scale.multiplyScalar(20);
+            loaded?.rotateY(Math.PI * -.5);
+            loaded.addComponent(Rotate);
 
-        const orbitControls = findObjectOfType(OrbitControls);
-        if(orbitControls) orbitControls.fitCamera(scene.children, {
-            immediate: false
-        });
-        ContactShadows.auto();    
+            const orbitControls = findObjectOfType(OrbitControls);
+            if (orbitControls) {
+                orbitControls.enablePan = false;
+                orbitControls.doubleClickToFocus = false;
+                orbitControls.fitCamera(scene.children, {
+                    immediate: false
+                });
+            }
+        }
     });
 
 
@@ -101,11 +88,29 @@ onStart(context =>{
     post.addEffect(new SharpeningEffect());
     const bloom = post.addEffect(new BloomEffect());
     bloom.scatter.value = .8;
+    bloom.threshold.value = 1;
 
-    const sphere = ObjectUtils.createPrimitive("Sphere", { 
-        material: new THREE.MeshStandardMaterial({emissive: 0xffffff, emissiveIntensity: 5})
+    const sphere = ObjectUtils.createPrimitive("Cube", {
+        scale: [2, .1, 2],
+        position: [0, -.05, 0],
+        material: new THREE.MeshStandardMaterial({
+            color: 0x0099ff,
+            emissive: 0xff5500,
+            emissiveIntensity: 2.5
+        })
     });
-    sphere.position.y = 2;
-    sphere.scale.multiplyScalar(0.1);
     scene.add(sphere);
+})
+
+
+onUpdate((ctx)=> {
+    const hits = ctx.physics.raycast({ray: undefined});
+    if(hits?.length) {
+        const hit = hits[0];
+        Gizmos.DrawWireSphere(hit.point, 0.2, 0xff0000);
+        if(hit.normal) 
+        {
+            Gizmos.DrawLine(hit.point, getTempVector(hit.point).add(hit.normal), 0xff0000)
+        }
+    }
 })
