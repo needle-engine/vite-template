@@ -8,6 +8,78 @@ import { Rotate } from "./scripts/Rotate.js";
 // or use NeedleEngine.addContextCreatedCallback
 onStart(context => {
     const scene = context.scene;
+    // add WebXR support
+    addComponent(scene, WebXR, {
+        createARButton: true,
+        createQRCode: true,
+        createVRButton: true,
+        createSendToQuestButton: true,
+    });
+
+    // We can modify the background or scene lighting easily using a RemoteSkybox
+    // We can also set the skybox directly on the scene if we load it manually
+    // Or just assign a background-image or environment-image attribute on <needle-engine>
+    // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
+    addComponent(scene, RemoteSkybox, {
+        // You can assign an URL here or one of the built-in keywords
+        url: "studio",
+        environment: true,
+        background: false,
+    });
+
+    // Make the background blurry
+    if (context.mainCameraComponent) {
+        context.mainCameraComponent.backgroundBlurriness = 1.2;
+    }
+
+    // Let's also add a Contact Shadow component
+    const contactshadows = ContactShadows.auto();
+
+    // To load or switch additional content it's easy to use a SceneSwitcher 
+    const sceneSwitcher = addComponent(scene, SceneSwitcher, {
+        autoLoadFirstScene: false
+    });
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZ1Mqr5s-Z1Mqr5s-world/file")
+
+    sceneSwitcher.select(0).then(_success => {
+        const loaded = sceneSwitcher.currentlyLoadedScene?.asset
+        if (loaded) {
+            console.log("Loaded Scene", loaded);
+            loaded?.rotateY(Math.PI * -.5);
+            loaded.addComponent(Rotate);
+
+            const orbitControls = findObjectOfType(OrbitControls);
+            if (orbitControls) {
+                orbitControls.enablePan = false;
+                orbitControls.doubleClickToFocus = false;
+                orbitControls.fitCamera(scene.children, {
+                    immediate: false
+                });
+            }
+        }
+    });
+
+
+    // To add postprocessing simple add a PostProcessingManager component to your scene
+    const post = addComponent(context.scene, PostProcessingManager);
+    post.addEffect(new SharpeningEffect());
+    //post.addEffect(new ToneMappingEffect()).setMode("AgX")
+    const bloom = post.addEffect(new BloomEffect());
+    bloom.scatter.value = .8;
+    bloom.threshold.value = 1;
+
+    const sphere = ObjectUtils.createPrimitive("Cube", {
+        scale: [1, .005, 1],
+        position: [0, -.01, 0],
+        material: new THREE.MeshStandardMaterial({
+            color: 0x333333,
+            metalness: .9,
+            roughness: .6,
+        })
+    });
+    scene.add(sphere);
+
+
 
     // you can use regular threejs syntax to create objects
     /*
@@ -30,76 +102,6 @@ onStart(context => {
     });
     */
 
-    // add WebXR support
-    addComponent(scene, WebXR, {
-        createARButton: true,
-        createQRCode: true,
-        createVRButton: true,
-        createSendToQuestButton: true,
-    });
-
-    // We can modify the background or scene lighting easily using a RemoteSkybox
-    // We can also set the skybox directly on the scene if we load it manually
-    // Or just assign a background-image or environment-image attribute on <needle-engine>
-    // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
-    addComponent(scene, RemoteSkybox, {
-        // You can assign an URL here or one of the built-in keywords
-        url: "studio",
-        environment: true,
-        background: false,
-    });
-
-    // Make the background blurry
-    if (context.mainCameraComponent) {
-        context.mainCameraComponent.backgroundBlurriness = 1.5;
-    }
-
-    // Let's also add a Contact Shadow component
-    const contactshadows = ContactShadows.auto();
-
-    // To load or switch additional content it's easy to use a SceneSwitcher 
-    const sceneSwitcher = addComponent(scene, SceneSwitcher, {
-        autoLoadFirstScene: false
-    });
-    sceneSwitcher.addScene("https://engine.needle.tools/demos/gltf-progressive/assets/cyberpunk/model.glb")
-
-    sceneSwitcher.select(0).then(_success => {
-        const loaded = sceneSwitcher.currentlyLoadedScene?.asset
-        if (loaded) {
-            console.log("Loaded Scene", loaded);
-            loaded?.scale.multiplyScalar(20);
-            loaded?.rotateY(Math.PI * -.5);
-            loaded.addComponent(Rotate);
-
-            const orbitControls = findObjectOfType(OrbitControls);
-            if (orbitControls) {
-                orbitControls.enablePan = false;
-                orbitControls.doubleClickToFocus = false;
-                orbitControls.fitCamera(scene.children, {
-                    immediate: false
-                });
-            }
-        }
-    });
-
-
-    // To add postprocessing simple add a PostProcessingManager component to your scene
-    const post = addComponent(context.scene, PostProcessingManager);
-    post.addEffect(new SharpeningEffect());
-    const bloom = post.addEffect(new BloomEffect());
-    bloom.scatter.value = .8;
-    bloom.threshold.value = 1;
-
-    const sphere = ObjectUtils.createPrimitive("Cube", {
-        scale: [2, .1, 2],
-        position: [0, -.05, 0],
-        material: new THREE.MeshStandardMaterial({
-            color: 0x0099ff,
-            emissive: 0xff5500,
-            emissiveIntensity: 2.5
-        })
-    });
-    scene.add(sphere);
 })
 
 
@@ -107,10 +109,10 @@ onUpdate((ctx)=> {
     const hits = ctx.physics.raycast({ray: undefined});
     if(hits?.length) {
         const hit = hits[0];
-        Gizmos.DrawWireSphere(hit.point, 0.2, 0xff0000);
+        Gizmos.DrawSphere(hit.point, 0.02, 0xffff00);
         if(hit.normal) 
         {
-            Gizmos.DrawLine(hit.point, getTempVector(hit.point).add(hit.normal), 0xff0000)
+            Gizmos.DrawLine(hit.point, getTempVector(hit.point).add(hit.normal), 0xff00ff)
         }
     }
 })
