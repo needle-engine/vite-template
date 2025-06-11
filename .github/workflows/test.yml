@@ -5,6 +5,10 @@ on:
     branches: ["test"]
 
   workflow_dispatch:
+    inputs:
+        webhookUrl:
+          description: 'Webhook URL for notifications'
+          required: false
 
 # Allow one concurrent deployment
 concurrency:
@@ -38,7 +42,7 @@ jobs:
             dir: ./dist
             next: true
             name: vite-template-test
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+            webhookUrl: ${{ inputs.webhookUrl || secrets.DISCORD_WEBHOOK }}
         
       - name: Display deployment URL
         run: |
