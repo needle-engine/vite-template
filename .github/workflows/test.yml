@@ -41,7 +41,7 @@ jobs:
             token: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
             dir: ./dist
             next: true
-            name: vite-template-test
+            name: ${{ github.repository }}-test
             webhookUrl: ${{ inputs.webhookUrl || secrets.DISCORD_WEBHOOK }}
         
       - name: Display deployment URL
