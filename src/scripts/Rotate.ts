@@ -13,6 +13,7 @@ export class Rotate extends Behaviour {
     update(): void {
         this.gameObject.rotateY(this.context.time.deltaTime * this.speed);
     }
+    /*
     onPointerEnter(_args: PointerEventData) {
         this.context.input.setCursor("pointer")
         showBalloonMessage("Enter " + this.gameObject.name);
@@ -22,6 +23,7 @@ export class Rotate extends Behaviour {
         showBalloonMessage("Exit " + this.gameObject.name);
     }
     onPointerClick(_args: PointerEventData) {
-        //this.gameObject.scale.multiplyScalar(1.1);
+        this.gameObject.scale.multiplyScalar(1.1);
     }
+    */
 }

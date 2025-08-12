@@ -1,14 +1,13 @@
-import { onStart, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils, onUpdate, Gizmos, getTempVector } from "@needle-tools/engine";
+import { onStart, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils, onUpdate, Gizmos, getTempVector, GroundProjectedEnv } from "@needle-tools/engine";
 import * as THREE from "three";
 import { Rotate } from "./scripts/Rotate.js";
 
-
-// onStart is one way to hook into the needle engine event loop (this is called once at the beginning of the update loop)
-// you can also directly hook into update events using onUpdate
-// or use NeedleEngine.addContextCreatedCallback
+// onStart is an easy way to hook into needle engine (this is called once at the beginning of the update loop)
 onStart(context => {
     const scene = context.scene;
-    // add WebXR support
+
+    // adding WebXR support can be done by simply adding a WebXR component. 
+    // For more control simply use the static NeedleXRSession methods
     addComponent(scene, WebXR, {
         createARButton: true,
         createQRCode: true,
@@ -24,16 +23,30 @@ onStart(context => {
         // You can assign an URL here or one of the built-in keywords
         url: "studio",
         environment: true,
-        background: false,
+        background: true,
     });
 
-    // Make the background blurry
-    if (context.mainCameraComponent) {
-        context.mainCameraComponent.backgroundBlurriness = 1.2;
-    }
+    // Set the blurriness of the background image
+    context.scene.backgroundBlurriness = .3;
 
-    // Let's also add a Contact Shadow component
+    // Needle Engine offers a couple of helper methods for creating common simple shapes. 
+    // But you can also use all the regular three.js APIs at any time
+    const cylinder = ObjectUtils.createPrimitive("Cylinder", {
+        scale: [1, .05, 1],
+        position: [0, -.01, 0],
+        material: new THREE.MeshStandardMaterial({
+            color: 0xaaaaaa,
+            metalness: .1,
+            roughness: .6,
+        })
+    });
+    scene.add(cylinder);
+
+
+    // To add contact shadows we can add the ContactShadows component to the scene (scene.addComponent(ContactShadows))
+    // Or we can call `ContactShadows.auto()` which automatically fits the shadows to our scene
     const contactshadows = ContactShadows.auto();
+
 
     // To load or switch additional content it's easy to use a SceneSwitcher 
     const sceneSwitcher = addComponent(scene, SceneSwitcher, {
@@ -46,12 +59,12 @@ onStart(context => {
         if (loaded) {
             console.log("Loaded Scene", loaded);
             loaded?.rotateY(Math.PI * -.5);
-            loaded.addComponent(Rotate);
+            loaded.addComponent(Rotate, { speed: .1 });
+            contactshadows.fitShadows();
 
             const orbitControls = findObjectOfType(OrbitControls);
             if (orbitControls) {
-                orbitControls.enablePan = false;
-                orbitControls.doubleClickToFocus = false;
+                orbitControls.enablePan = true;
                 orbitControls.fitCamera(scene.children, {
                     immediate: false
                 });
@@ -66,22 +79,12 @@ onStart(context => {
     //post.addEffect(new ToneMappingEffect()).setMode("AgX")
     const bloom = post.addEffect(new BloomEffect());
     bloom.scatter.value = .8;
-    bloom.threshold.value = 1;
-
-    const sphere = ObjectUtils.createPrimitive("Cube", {
-        scale: [1, .005, 1],
-        position: [0, -.01, 0],
-        material: new THREE.MeshStandardMaterial({
-            color: 0x333333,
-            metalness: .9,
-            roughness: .6,
-        })
-    });
-    scene.add(sphere);
+    bloom.threshold.value = 1.1;
+    bloom.intensity.value = .2;
 
 
 
-    // you can use regular threejs syntax to create objects
+    // you can use also regular threejs syntax to create objects
     /*
     const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
     const material = new THREE.MeshStandardMaterial( { color: 0xaaaaaa } ); 
@@ -112,7 +115,7 @@ onUpdate((ctx)=> {
         Gizmos.DrawSphere(hit.point, 0.02, 0xffff00);
         if(hit.normal) 
         {
-            Gizmos.DrawLine(hit.point, getTempVector(hit.point).add(hit.normal), 0xff00ff)
+            Gizmos.DrawLine(hit.point, getTempVector(hit.normal).multiplyScalar(.1).add(hit.point), 0xffff00)
         }
     }
 })
