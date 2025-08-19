@@ -3,6 +3,7 @@ name: Build and Deploy to Needle Cloud
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:  # This allows manual triggering
 
 jobs:
   build-and-deploy:
