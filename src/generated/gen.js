@@ -2,7 +2,6 @@
 
 export const needle_exported_files = [];
 globalThis["needle:codegen_files"] = needle_exported_files;
-needle_exported_files.push("assets/basic.glb?v=1684752175704");
 
 document.addEventListener("DOMContentLoaded", () =>
 {
@@ -14,4 +13,3 @@ document.addEventListener("DOMContentLoaded", () =>
 	}
 });
 
-console.log("Made\ with\ ♥\ by\ 🌵\ Needle\ -\ https://needle\.tools\ —\ Version\ 3\.5\.9-pre\.2");

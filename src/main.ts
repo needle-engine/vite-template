@@ -6,14 +6,7 @@ import { Rotate } from "./scripts/Rotate.js";
 onStart(context => {
     const scene = context.scene;
 
-    // adding WebXR support can be done by simply adding a WebXR component. 
-    // For more control simply use the static NeedleXRSession methods
-    addComponent(scene, WebXR, {
-        createARButton: true,
-        createQRCode: true,
-        createVRButton: true,
-        createSendToQuestButton: true,
-    });
+    context.mainCamera.position.set(0,1,10);
 
     // We can modify the background or scene lighting easily using a RemoteSkybox
     // We can also set the skybox directly on the scene if we load it manually
@@ -103,6 +96,17 @@ onStart(context => {
     bloom.threshold.value = 2;
     bloom.intensity.value = .2;
 
+
+    /*
+    // adding WebXR support can be done by simply adding a WebXR component. 
+    // For more fine-grained control use the static NeedleXRSession methods
+    addComponent(scene, WebXR, {
+        createARButton: true,
+        createQRCode: true,
+        createVRButton: true,
+        createSendToQuestButton: true,
+    });
+    */
 
 
     // you can use also regular threejs syntax to create objects
