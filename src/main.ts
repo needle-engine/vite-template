@@ -7,6 +7,7 @@ onStart(context => {
     const scene = context.scene;
 
     context.mainCamera.position.set(0,1,10);
+    context.menu.showFullscreenOption(true);
 
     // We can modify the background or scene lighting easily using a RemoteSkybox
     // We can also set the skybox directly on the scene if we load it manually
