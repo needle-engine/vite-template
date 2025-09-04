@@ -8,15 +8,16 @@ export default defineConfig(async ({ command }) => {
         base: "./",
         plugins: [
             useGzip(needleConfig) ? viteCompression({ deleteOriginFile: true }) : null,
-            needlePlugins(command, needleConfig, { noPoster: true, allowHotReload: false }),
+            needlePlugins(command, needleConfig, { noPoster: true, }),
         ],
         server: {
             https: false,
-            proxy: { // workaround: specifying a proxy skips HTTP2 which is currently problematic in Vite since it causes session memory timeouts.
-                'https://localhost:1107': 'https://localhost:1107'
+            proxy: {
+              'https://localhost:3000': 'https://localhost:3000',
             },
             strictPort: true,
-            port: 1107,
+            port: 3000,
+            hmr: false,
         },
         build: {
             outDir: "./dist",
