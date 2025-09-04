@@ -1,4 +1,4 @@
-import { onStart, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils, onUpdate, Gizmos, getTempVector, GroundProjectedEnv } from "@needle-tools/engine";
+import { onStart, RemoteSkybox, WebXR, addComponent, ContactShadows, SceneSwitcher, findObjectOfType, OrbitControls, PostProcessingManager, ToneMappingEffect, BloomEffect, SharpeningEffect, ScreenSpaceAmbientOcclusionN8, ObjectUtils, onUpdate, Gizmos, getTempVector, GroundProjectedEnv, fitObjectIntoVolume, Antialiasing, AnimationUtils, Mathf, useForAutoFit, setAutoFitEnabled } from "@needle-tools/engine";
 import * as THREE from "three";
 import { Rotate } from "./scripts/Rotate.js";
 
@@ -19,67 +19,88 @@ onStart(context => {
     // We can also set the skybox directly on the scene if we load it manually
     // Or just assign a background-image or environment-image attribute on <needle-engine>
     // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
+    // Get Superfast Hdri maps at https://cloud.needle.tools/hdris
     addComponent(scene, RemoteSkybox, {
         // You can assign an URL here or one of the built-in keywords
-        url: "studio",
+        url: "https://cdn.needle.tools/static/hdris/photo_studio_01_4k.pmrem.ktx2",
         environment: true,
         background: true,
     });
-
-    // Set the blurriness of the background image
-    context.scene.backgroundBlurriness = .3;
-
-    // Needle Engine offers a couple of helper methods for creating common simple shapes. 
-    // But you can also use all the regular three.js APIs at any time
-    const cylinder = ObjectUtils.createPrimitive("Cylinder", {
-        scale: [1, .05, 1],
-        position: [0, -.01, 0],
-        material: new THREE.MeshStandardMaterial({
-            color: 0xaaaaaa,
-            metalness: .1,
-            roughness: .6,
-        })
-    });
-    scene.add(cylinder);
+    scene.backgroundBlurriness = .2;
 
 
     // To add contact shadows we can add the ContactShadows component to the scene (scene.addComponent(ContactShadows))
     // Or we can call `ContactShadows.auto()` which automatically fits the shadows to our scene
     const contactshadows = ContactShadows.auto();
+    contactshadows.darkness = .8;
+    contactshadows.opacity = .9;
+
+    // Needle Engine offers a couple of helper methods for creating common simple shapes. 
+    // But you can also use all the regular three.js APIs at any time
+    const cylinder = ObjectUtils.createPrimitive("Cylinder", {
+        scale: [1, .05, 1],
+        position: [0, -.025, 0],
+        material: new THREE.MeshStandardMaterial({
+            color: new THREE.Color(0.8,0.8,0.8),
+            metalness: .1,
+            roughness: .6,
+        })
+    });
+    setAutoFitEnabled(cylinder, false);
+    scene.add(cylinder);
 
 
     // To load or switch additional content it's easy to use a SceneSwitcher 
     const sceneSwitcher = addComponent(scene, SceneSwitcher, {
-        autoLoadFirstScene: false
+        autoLoadFirstScene: false,
+        createMenuButtons: true,
+        clamp: false,
+        preloadNext: 1,
+        preloadPrevious: 1,
     });
-    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZ1Mqr5s-Z1Mqr5s-world/file")
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZ21QnG-latest-world/file");
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBzvPW9-latest-product/file");
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZvGGVp-latest-product/file");
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZ20RjNk-latest-product/file");
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXB27L6Db-1QlLnf-world/file");
+    sceneSwitcher.addScene("https://cloud.needle.tools/-/assets/Z23hmXBZ2sPRdk-world/file");
 
-    sceneSwitcher.select(0).then(_success => {
+    sceneSwitcher.sceneLoaded.addEventListener(()=>{
         const loaded = sceneSwitcher.currentlyLoadedScene?.asset
         if (loaded) {
-            console.log("Loaded Scene", loaded);
-            loaded?.rotateY(Math.PI * -.5);
-            loaded.addComponent(Rotate, { speed: .1 });
-            contactshadows.fitShadows();
+
+            const volumeSize = new THREE.Vector3(1,1.5,1);
+            fitObjectIntoVolume(loaded, new THREE.Box3().setFromCenterAndSize(new THREE.Vector3(0,volumeSize.y*.501,0), volumeSize));
+
+            contactshadows.fitShadows({object:loaded, positionOffset: {y:0.01}});
+
+            AnimationUtils.autoplayAnimations(loaded);
 
             const orbitControls = findObjectOfType(OrbitControls);
             if (orbitControls) {
                 orbitControls.enablePan = true;
-                orbitControls.fitCamera(scene.children, {
-                    immediate: false
+                orbitControls.fitCamera(loaded, {
+                    immediate: false,
+                    fitOffset: 1,
+                    fitDirection: {x:-.5,y:.3,z:1},
+                    relativeTargetOffset: {y:0},
+                    fov: 20,
                 });
             }
         }
-    });
+    })
+
+    sceneSwitcher.select(0);
 
 
     // To add postprocessing simple add a PostProcessingManager component to your scene
     const post = addComponent(context.scene, PostProcessingManager);
     post.addEffect(new SharpeningEffect());
-    //post.addEffect(new ToneMappingEffect()).setMode("AgX")
+    post.addEffect(new ToneMappingEffect()).setMode("AgX")
+    post.addEffect(new Antialiasing());
     const bloom = post.addEffect(new BloomEffect());
-    bloom.scatter.value = .8;
-    bloom.threshold.value = 1.1;
+    bloom.scatter.value = .9;
+    bloom.threshold.value = 2;
     bloom.intensity.value = .2;
 
 
@@ -112,10 +133,10 @@ onUpdate((ctx)=> {
     const hits = ctx.physics.raycast({ray: undefined});
     if(hits?.length) {
         const hit = hits[0];
-        Gizmos.DrawSphere(hit.point, 0.02, 0xffff00);
+        Gizmos.DrawSphere(hit.point, 0.005, 0x33ff33);
         if(hit.normal) 
         {
-            Gizmos.DrawLine(hit.point, getTempVector(hit.normal).multiplyScalar(.1).add(hit.point), 0xffff00)
+            Gizmos.DrawLine(hit.point, getTempVector(hit.normal).multiplyScalar(.1).add(hit.point), 0x33ff33)
         }
     }
 })
