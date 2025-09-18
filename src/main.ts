@@ -9,19 +9,6 @@ onStart(context => {
     context.mainCamera.position.set(0,1,10);
     context.menu.showFullscreenOption(true);
 
-    // We can modify the background or scene lighting easily using a RemoteSkybox
-    // We can also set the skybox directly on the scene if we load it manually
-    // Or just assign a background-image or environment-image attribute on <needle-engine>
-    // See https://engine.needle.tools/docs/reference/needle-engine-attributes.html 
-    // Get Superfast Hdri maps at https://cloud.needle.tools/hdris
-    addComponent(scene, RemoteSkybox, {
-        // You can assign an URL here or one of the built-in keywords
-        url: "https://cdn.needle.tools/static/hdris/photo_studio_01_4k.pmrem.ktx2",
-        environment: true,
-        background: true,
-    });
-    scene.backgroundBlurriness = .2;
-
 
     // To add contact shadows we can add the ContactShadows component to the scene (scene.addComponent(ContactShadows))
     // Or we can call `ContactShadows.auto()` which automatically fits the shadows to our scene
@@ -73,7 +60,8 @@ onStart(context => {
             const orbitControls = findObjectOfType(OrbitControls);
             if (orbitControls) {
                 orbitControls.enablePan = true;
-                orbitControls.fitCamera(loaded, {
+                orbitControls.fitCamera({
+                    objects: loaded,
                     immediate: false,
                     fitOffset: 1,
                     fitDirection: {x:-.5,y:.3,z:1},
