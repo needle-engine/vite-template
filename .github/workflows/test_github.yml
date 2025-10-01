@@ -40,7 +40,7 @@ jobs:
         with:
             token: ${{ secrets.NEEDLE_CLOUD_TOKEN }}
             dir: ./dist
-            overrideVersion: "next"
+            overrideVersion: "rc"
             name: ${{ github.repository }}-test
             webhookUrl: ${{ inputs.webhookUrl || secrets.DISCORD_WEBHOOK }}
         
