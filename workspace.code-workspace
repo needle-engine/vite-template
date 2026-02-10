@@ -14,6 +14,9 @@
       "**/.git": true,
       "**/.DS_Store": true,
       "**/*.meta": true
-    }
+    },
+    "html.customData": [
+      "./../node_modules/@needle-tools/engine/custom-elements.json"
+    ]
   }
 }

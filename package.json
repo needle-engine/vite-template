@@ -4,11 +4,12 @@
   "scripts": {
     "start": "vite --host",
     "build:dev": "vite build",
-    "build:production": "vite build -- --production"
+    "build:production": "vite build -- --production",
+    "deploy": "npm run build:dev && npx --yes needle-cloud deploy dist --token"
   },
   "dependencies": {
-    "@needle-tools/engine": "4.10.0-next.f0ec242",
-    "three": "npm:@needle-tools/three@^0.169.10"
+    "@needle-tools/engine": "4.13.0-next.266306a",
+    "three": "npm:@needle-tools/three@^0.169.15"
   },
   "devDependencies": {
     "@needle-tools/helper": "^1.11.4",

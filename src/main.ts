@@ -86,16 +86,15 @@ onStart(context => {
     bloom.intensity.value = .2;
 
 
-    /*
     // adding WebXR support can be done by simply adding a WebXR component. 
     // For more fine-grained control use the static NeedleXRSession methods
     addComponent(scene, WebXR, {
         createARButton: true,
-        createQRCode: true,
         createVRButton: true,
+        createQRCode: true,
         createSendToQuestButton: true,
+        autoPlace: true,
     });
-    */
 
 
     // you can use also regular threejs syntax to create objects
