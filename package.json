@@ -8,7 +8,7 @@
     "deploy": "npm run build:dev && npx --yes needle-cloud deploy dist --token"
   },
   "dependencies": {
-    "@needle-tools/engine": "4.13.0-next.266306a",
+    "@needle-tools/engine": "4.13.0-next.e86f701",
     "three": "npm:@needle-tools/three@^0.169.15"
   },
   "devDependencies": {
