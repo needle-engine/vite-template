@@ -2,9 +2,11 @@
   "name": "@needle-tools/vite-template",
   "version": "1.0.0",
   "scripts": {
-    "start": "vite --host",
+    "dev": "vite --host",
+    "start": "npm run dev",
+    "build": "vite build -- --production",
     "build:dev": "vite build",
-    "build:production": "vite build -- --production",
+    "build:production": "npm run build",
     "deploy": "npm run build:dev && npx --yes needle-cloud deploy dist --token"
   },
   "dependencies": {
