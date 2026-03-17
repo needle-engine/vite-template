@@ -8,3 +8,5 @@ include/fonts/
 build.log
 dist
 .DS_Store
+*/skills/needle-engine/SKILL.md
+.vscode/custom-elements.json
