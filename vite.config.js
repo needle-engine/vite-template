@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import viteCompression from 'vite-plugin-compression';
+import viteCompression from 'vite-plugin-compression2';
 
 export default defineConfig(async ({ command }) => {
     const { needlePlugins, useGzip, loadConfig } = await import("@needle-tools/engine/plugins/vite/index.js");
