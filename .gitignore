@@ -8,3 +8,4 @@ include/fonts/
 build.log
 dist
 .DS_Store
+custom-elements.json
