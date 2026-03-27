@@ -10,16 +10,15 @@
     "deploy": "npm run build && npx --yes needle-cloud deploy dist --token"
   },
   "dependencies": {
-    "@needle-tools/engine": "^4.17.0-alpha",
-    "three": "npm:@needle-tools/three@^0.169.19"
+    "@needle-tools/engine": "5.0.0",
+    "three": "npm:@needle-tools/three@0.169.19"
   },
   "devDependencies": {
     "@needle-tools/helper": "^1.11.4",
     "@types/three": "0.169.0",
-    "@vitejs/plugin-basic-ssl": "^1.0.1",
+    "@vitejs/plugin-basic-ssl": "2",
     "typescript": "^5.0.4",
-    "vite": "<= 4.3.9",
-    "vite-plugin-compression": "^0.5.1"
+    "vite": "8.0.3"
   },
   "author": {
     "name": "Needle Tools",
