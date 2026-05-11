@@ -10,7 +10,7 @@
     "deploy": "npm run build && npx --yes needle-cloud deploy dist --token"
   },
   "dependencies": {
-    "@needle-tools/engine": "5.0.0",
+    "@needle-tools/engine": "^5.1.0-alpha.5",
     "three": "npm:@needle-tools/three@0.169.19"
   },
   "devDependencies": {

@@ -30,11 +30,6 @@ jobs:
     env:
       CLOUD_TOKEN: ${{ inputs.api == 'staging' && secrets.NEEDLE_CLOUD_TOKEN_STAGING || secrets.NEEDLE_CLOUD_TOKEN }}
     steps:
-      - name: Debug inputs
-        run: |
-          echo "inputs.api: ${{ inputs.api }}"
-          echo "inputs.overrideVersion: ${{ inputs.overrideVersion }}"
-          echo "token length: ${#CLOUD_TOKEN}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -48,6 +43,7 @@ jobs:
         run: npm run build:production
         env:
           NEEDLE_CLOUD_TOKEN: ${{ env.CLOUD_TOKEN }}
+          NEEDLE_CLOUD_CLI_VERSION_OVERRIDE: ${{ inputs.overrideVersion || 'rc' }}
 
       - name: Deploy to Needle Cloud
         uses: needle-tools/deploy-to-needle-cloud-action@v1
